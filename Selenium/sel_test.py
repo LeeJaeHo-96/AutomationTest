@@ -1,9 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import time
 
+options = Options()
+options.add_argument("--headless")            # 👈 모니터 없는 가상 서버 구동을 위한 필수 옵션
+options.add_argument("--no-sandbox")           # 👈 리눅스 권한 에러 방지
+options.add_argument("--disable-dev-shm-usage")   # 👈 메모리 부족으로 인한 브라우저 뻗음 방지
+
 # 1. 크롬 드라이버 실행
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options=options)
 
 try:
     # 2. 쇼핑몰 사이트 이동
