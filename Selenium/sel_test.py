@@ -1,21 +1,33 @@
-import time
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+import time
 
-# 1. 크롬 드라이버 자동 다운로드 및 설정
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service)
+# 1. 크롬 드라이버 실행
+driver = webdriver.Chrome()
 
 try:
-    # 2. 구글 메인 페이지로 이동
-    driver.get("https://www.google.com")
-    print("브라우저가 성공적으로 열렸습니다!")
+    # 2. 쇼핑몰 사이트 이동
+    driver.get('https://www.saucedemo.com/')
+    driver.implicitly_wait(5) # 요소가 로딩될 때까지 최대 5초 대기 (Playwright의 자동 대기 기능 대체)
+
+    # 3. 로그인 정보 입력 (textbox 찾기)
+    driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Username"]').send_keys('standard_user')
+    driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Password"]').send_keys('secret_sauce')
+
+    # 4. 로그인 버튼 클릭
+    driver.find_element(By.ID, 'login-button').click()
+    time.sleep(1) # 화면 전환 대기
+
+    # 5. 'Add to cart' 버튼들 전부 다 찾기 (find_elements 사용)
+    # class 이름이나 텍스트를 활용해 버튼 여러 개를 리스트로 긁어옵니다.
+    add_to_cart_buttons = driver.find_elements(By.XPATH, "//button[text()='Add to cart']")
+
+    # 6. 그 중 첫 번째(0번 인덱스) 버튼 클릭! (Playwright의 .first().click()과 동일)
+    add_to_cart_buttons[0].click()
     
-    # 3. 열린 화면을 5초 동안 유지하며 확인하기
-    time.sleep(5)
+    print("셀레늄 테스트 성공: 첫 번째 상품 장바구니 담기 완료!")
+    time.sleep(3) # 결과 눈으로 확인하기 위한 잠깐 대기
 
 finally:
-    # 4. 테스트가 끝나면 브라우저를 안전하게 닫기
+    # 7. 브라우저 종료
     driver.quit()
-    print("브라우저가 안전하게 종료되었습니다.")
