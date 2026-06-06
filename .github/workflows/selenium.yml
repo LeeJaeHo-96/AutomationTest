@@ -4,8 +4,14 @@ name: Selenium Tests
 on:
   push:
     branches: [ main, master ]
+    paths:
+      - 'Selenium/**'
+      - '.github/workflows/selenium.yml'
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'Selenium/**'
+      - '.github/workflows/selenium.yml'
 
 jobs:
   selenium-run:
