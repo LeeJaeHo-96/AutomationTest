@@ -1,27 +1,48 @@
 name: Playwright Tests
+
+# 1. 트리거 조건: main 또는 master 브랜치에 코드가 push되거나 PR이 날아올 때 실행
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+
 jobs:
   test:
+    # 테스트가 무한 루프에 빠져 무한정 서버 비용이 나오는 것을 방지 (최대 60분 제한)
     timeout-minutes: 60
+    
+    # 2. 깃허브가 제공하는 최신 우분투 리눅스 가상 컴퓨터 대여
     runs-on: ubuntu-latest
+    
     steps:
+    # 3. 현재 레포지토리의 소스코드를 가상 컴퓨터로 복사해오기
     - uses: actions/checkout@v4
+
+    # 4. 가상 컴퓨터에 Node.js(LTS 버전) 설치하기
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
+    # 5. package-lock.json 설계도 그대로 '엄격하게' 의존성 라이브러리 설치하기
+    # (CI 환경에서 버전 뒤틀림을 방지하기 위해 npm install 대신 npm ci 사용)
     - name: Install dependencies
       run: npm ci
+
+    # 6. 리눅스 가상 컴퓨터 환경에 Playwright 전용 브라우저들(Chromium, WebKit 등) 강제 설치
+    # (--with-deps 옵션을 통해 리눅스 운영체제에 필요한 필수 보안/시스템 패키지까지 함께 세팅)
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    # 7. 내가 짠 플레이라이트 테스트 스크립트 실행하기
     - name: Run Playwright tests
       run: npx playwright test
+
+    # 8. [트러블슈팅/디버깅용] 테스트 결과 리포트 및 산출물 보존하기
+    # 취소(cancelled)되지 않았다면 성공/실패 여부와 관계없이 무조건 리포트를 업로드하도록 설정
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+        name: playwright-report # 깃허브 웹 UI에 표시될 압축 파일의 이름
+        path: playwright-report/ # 가상 컴퓨터 내에서 긁어올 리포트 폴더 경로
+        retention-days: 30       # 깃허브 서버에 이 리포트 파일을 딱 30일 동안만 보관 (기간 지나면 자동 삭제)
