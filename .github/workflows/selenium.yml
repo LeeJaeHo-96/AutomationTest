@@ -36,10 +36,9 @@ jobs:
         pip install selenium webdriver-manager
 
     # 7. 내가 짠 셀레늄 파이썬 스크립트 실행하기
-    # ⚠️ 만약 폴더 구조가 다르다면 아래 파일 경로(예: tests/sel_test.py)를 내 파일 위치에 맞게 수정하세요!
     - name: Run Selenium Test
       run: |
-        python tests/sel_test.py
+        python Selenium/sel_test.py
 
     # 8. [트러블슈팅/디버깅용] 테스트 실패 시 로그 및 결과물 보존하기
     # 테스트가 실패(failure)했을 때만 작동하도록 조건을 걸어둠
