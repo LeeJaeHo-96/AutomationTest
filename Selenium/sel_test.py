@@ -37,3 +37,5 @@ try:
 finally:
     # 7. 브라우저 종료
     driver.quit()
+
+    # 분리되었는지 확인용
