@@ -10,4 +10,6 @@ test('실제 로직', async({page}) => {
     await page.getByRole('button', { name: 'Login' }).click();
 
     await page.getByRole('button', { name: 'Add to cart' }).first().click();
+
+    //분리되었는지 확인용
 });
