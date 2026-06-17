@@ -1,5 +1,6 @@
 const { GnbComponent } = require('./GnbComponent');
 const { WeekdayNavComponent } = require('./WeekdayNavComponent');
+const { SearchPage } = require('./SearchPage');
 
 class WebtoonMainPage {
   constructor(page)
@@ -23,18 +24,22 @@ class WebtoonMainPage {
 
   async clickFirstWebtoon()
   {
-    const webtoonListSection = this.page.locator('.section_list_toon');
+    const webtoonList = this.page.locator('[class*="section_list_toon"]');
+  
+    await webtoonList.waitFor({ state: 'visible', timeout: 10000 });
 
-    const firstCard = webtoonListSection.getByRole('link').first(); 
-  
-    const rawText = await firstCard.textContent(); 
-  
-    const expectedTitle = rawText.split(' ')[0].trim(); 
-  
-    console.log(`1등 웹툰 제목: ${expectedTitle}`);
+    // 내부의 첫 번째 링크 잡기
+    const firstWebtoon = webtoonList.getByRole('link').first();
 
-    await firstCard.click(); 
-    return expectedTitle; 
+    // 텍스트 추출
+    const titleText = firstWebtoon.locator('.title');
+    const rawText = await titleText.textContent();
+    const expectedTitle = rawText ? rawText.trim() : "제목 없음";
+
+    // 이미 로케이터가 잡혀있으므로 바로 클릭
+    await firstWebtoon.click(); 
+  
+    return expectedTitle;
   }
 
   async clickDayOfTheWeek(day)
@@ -47,8 +52,28 @@ class WebtoonMainPage {
   {
     await this.gnb.ClickSearch();
     // 검색 페이지로 이동 후, 검색어 입력 및 검색 실행
-    const searchPage = new SearchPage(this.page);
-    await searchPage.searchFor(keyword);
+    const _searchPage = new SearchPage(this.page);
+    await _searchPage.searchFor(keyword);
+  }
+
+  async ClickFirstWebtoonForSearch()
+  {
+    const webtoonList = this.page.locator('[class*="toon_lst"]').first();
+
+    await webtoonList.waitFor({ state: 'visible', timeout: 10000 });
+
+    // 내부의 첫 번째 링크 잡기
+    const firstWebtoon = webtoonList.getByRole('link').first();
+
+    // 텍스트 추출
+    const titleText = firstWebtoon.locator('.toon_name');
+    const rawText = await titleText.textContent();
+    const expectedTitle = rawText ? rawText.trim() : "제목 없음";
+
+    // 이미 로케이터가 잡혀있으므로 바로 클릭
+    await firstWebtoon.click(); 
+  
+    return expectedTitle;
   }
 
   
