@@ -36,6 +36,17 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'setup',
+      testMatch: 'auth.setup.js',
+    },
+    /*
+    {
+      name: 'chromium',
+      dependencies: ['setup'], // setup이 끝난 후 나머지 테스트 실행
+      use: { ...require('@playwright/test').devices['iPhone 13'], storageState: 'auth.json', },
+      
+    },*/
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
